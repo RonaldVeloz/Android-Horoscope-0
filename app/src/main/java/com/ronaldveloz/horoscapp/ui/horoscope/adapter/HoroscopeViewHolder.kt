@@ -17,11 +17,15 @@ class HoroscopeViewHolder(view: View) : RecyclerView.ViewHolder(view) {
         binding.tvTitle.text = context.getString(horoscopeInfo.name)
 
         binding.parent.setOnClickListener {
-            startRotationAnimation(binding.ivHoroscope, newLambda = { onItemSelected(horoscopeInfo) })
-             onItemSelected(horoscopeInfo) }
+            startRotationAnimation(
+                binding.ivHoroscope,
+                newLambda = { onItemSelected(horoscopeInfo) })
+            onItemSelected(horoscopeInfo)
+        }
 
     }
-    fun startRotationAnimation(view: View, newLambda: () -> Unit) {
+
+    private fun startRotationAnimation(view: View, newLambda: () -> Unit) {
         view.animate().apply {
             duration = 500
             interpolator = LinearInterpolator()
