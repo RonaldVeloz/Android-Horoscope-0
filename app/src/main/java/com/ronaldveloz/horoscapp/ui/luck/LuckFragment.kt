@@ -2,6 +2,8 @@ package com.ronaldveloz.horoscapp.ui.luck
 
 import com.ronaldveloz.horoscapp.R
 import android.animation.ObjectAnimator
+import android.annotation.SuppressLint
+import android.content.Intent
 import android.os.Bundle
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
@@ -13,16 +15,19 @@ import android.view.animation.AnimationUtils
 import android.view.animation.DecelerateInterpolator
 import androidx.core.animation.doOnEnd
 import com.ronaldveloz.horoscapp.databinding.FragmentLuckBinding
+import com.ronaldveloz.horoscapp.ui.core.listeners.OnSwipeTouchListener
+import com.ronaldveloz.horoscapp.ui.providers.RandomCardProvider
 import dagger.hilt.android.AndroidEntryPoint
 import java.util.Random
+import javax.inject.Inject
 
 @AndroidEntryPoint
 class LuckFragment : Fragment() {
-
-    private val luckViewModel = LuckViewModel()
-
     private var _binding: FragmentLuckBinding? = null
     private val binding get() = _binding!!//Indicación de que no puede ser nulo
+
+    @Inject
+    lateinit var randomCardProvider: RandomCardProvider
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -31,7 +36,32 @@ class LuckFragment : Fragment() {
     }
 
     private fun initUI() {
-        binding.ivRoulette.setOnClickListener { spinRoulette() }
+        preparePrediction()
+        initListener()
+
+    }
+
+    private fun preparePrediction() {
+        val luck = randomCardProvider.getLucky()
+        luck?.let {
+            val currentPrediction = getString(it.text)
+            binding.tvLucky.text = currentPrediction
+            binding.ivLuckyCard.setImageResource(it.image)
+            binding.tvShared.setOnClickListener { shareResult(currentPrediction) }
+        }
+    }
+
+    @SuppressLint("ClickableViewAccessibility")
+    private fun initListener() {
+        //binding.ivRoulette.setOnClickListener { spinRoulette() }
+        binding.ivRoulette.setOnTouchListener(object : OnSwipeTouchListener(requireContext()) {
+            override fun onSwipeRight() {
+                spinRoulette()
+            }
+            override fun onSwipeLeft() {
+                spinRoulette()
+            }
+        })
     }
 
     private fun spinRoulette() {
@@ -110,4 +140,15 @@ class LuckFragment : Fragment() {
         return binding.root
 
     }
+}
+
+private fun LuckFragment.shareResult(currentPrediction: String) {
+    val sendIntent: Intent = Intent().apply {
+        action = Intent.ACTION_SEND
+        putExtra(Intent.EXTRA_TEXT, currentPrediction)
+        type = "text/plain"
+
+    }
+    val shareIntent = Intent.createChooser(sendIntent, null)
+    startActivity(shareIntent)
 }
