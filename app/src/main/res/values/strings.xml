@@ -57,4 +57,7 @@
     <string name="luck_30">"Unexpected travel plans will broaden your horizons."</string>
     <string name="luck_31">"A surprising twist of fate will bring unexpected blessings."</string>
     <string name="image_horoscope">Image horoscope</string>
+    <string name="Roulette">Es una ruleta de cartas</string>
+    <string name="Carta_de_la_suerte">Es tu carta elegida, tu suerte</string>
+    <string name="esto_no_se_ve">Esto no se ve</string>
 </resources>
